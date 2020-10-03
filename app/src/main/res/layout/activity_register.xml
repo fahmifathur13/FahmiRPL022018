@@ -22,7 +22,7 @@
         android:paddingLeft="15dp"
         android:drawableLeft="@drawable/ic_keyboard_arrow_left_black_24dp"
         android:textStyle="bold"
-        android:text="SIGN UP"
+        android:text="Register"
         android:textColor="@color/colorPrimary"
         android:textSize="23sp"
         />
@@ -50,7 +50,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Name"
+            android:text="Nama"
             android:paddingLeft="10dp"
             android:textSize="16sp"
             />
@@ -100,7 +100,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mobile Number"
+            android:text="Nomor Telephone"
             android:paddingLeft="10dp"
             android:textSize="16sp"
             />
@@ -117,7 +117,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Address"
+            android:text="Alamat"
             android:paddingLeft="10dp"
             android:textSize="16sp"
             />
@@ -133,7 +133,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="KTP Number"
+            android:text="Nomor KTP"
             android:paddingLeft="10dp"
             android:textSize="16sp"
             />
@@ -156,7 +156,7 @@
             android:layout_height="50dp">
 
             <TextView
-                android:text="Sign up"
+                android:text="Register"
                 android:textSize="17sp"
                 android:textColor="#fff"
                 android:layout_width="wrap_content"

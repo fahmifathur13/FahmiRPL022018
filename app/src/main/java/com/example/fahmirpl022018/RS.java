@@ -34,13 +34,6 @@ public class RS extends Application {
                 .build();
         AndroidNetworking.initialize(this,okHttpClient);
 
-//        Realm.init(getApplicationContext());
-//        RealmConfiguration config = new RealmConfiguration.Builder()
-//                .name("unit.realm")
-//                .schemaVersion(2)
-//                .deleteRealmIfMigrationNeeded()
-//                .build();
-//        Realm.setDefaultConfiguration(config);
     }
 
     public OkHttpClient getOkHttpClient(){

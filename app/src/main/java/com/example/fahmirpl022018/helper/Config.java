@@ -33,7 +33,7 @@ import java.util.Random;
  */
 
 public final class Config {
-    public static final String BASE_URL = "http://192.168.6.42/fahmi-api-rentalsepeda/";
+    public static final String BASE_URL = "http://192.168.6.41/fahmi-api-rentalsepeda/";
 
     private static final String API = "api/";
     public static final String BASE_URL_API = BASE_URL + API;
