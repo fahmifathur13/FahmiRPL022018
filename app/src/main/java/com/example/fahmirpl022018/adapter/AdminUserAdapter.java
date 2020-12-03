@@ -41,10 +41,9 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.Item
     private AdminUserActivity mAdminUserActivity;
 
 
-    public AdminUserAdapter(Context context, List<UserAdminModel> mList, String loginToken, Activity AdminUserActivity) {
+    public AdminUserAdapter(Context context, List<UserAdminModel> mList, Activity AdminUserActivity) {
         this.context = context;
         this.mList = mList;
-        this.mLoginToken = loginToken;
         this.mAdminUserActivity = (AdminUserActivity) AdminUserActivity;
 
     }

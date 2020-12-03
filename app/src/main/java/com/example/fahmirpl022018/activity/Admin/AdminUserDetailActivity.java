@@ -39,16 +39,6 @@ public class AdminUserDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences sp = getSharedPreferences(Config.SHARED_PREF_NAME, Context.MODE_PRIVATE);
-
-        mLoginToken = sp.getString(Config.LOGIN_TOKEN_SHARED_PREF,"");
-        mUserId = sp.getString(Config.LOGIN_ID_SHARED_PREF, "");
-
-        if(mLoginToken.equalsIgnoreCase("") || mUserId.equalsIgnoreCase("")) {
-            finish();
-            Config.forceLogout(AdminUserDetailActivity.this);
-        }
-
         setContentView(R.layout.activity_admin_user_detail);
         binding();
         mOrderData = getIntent().getExtras().getParcelable("extra_user");
@@ -75,16 +65,14 @@ public class AdminUserDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 HashMap<String, String> body = new HashMap<>();
-                body.put("act", "update_user");
-                body.put("loginToken", mLoginToken);
-                body.put("uId", U_ID);
-                body.put("uName", etNama.getText().toString());
-                body.put("uAddress", etAlamat.getText().toString());
-                body.put("uEmail", etEmail.getText().toString());
-                body.put("uKtp", etKtp.getText().toString());
-                body.put("uPhone", etPhone.getText().toString());
+                body.put("id", U_ID);
+                body.put("username", etNama.getText().toString());
+                body.put("alamat", etAlamat.getText().toString());
+                body.put("email", etEmail.getText().toString());
+                body.put("noktp", etKtp.getText().toString());
+                body.put("nohp", etPhone.getText().toString());
 
-                AndroidNetworking.post(Config.BASE_URL_API + "auth.php")
+                AndroidNetworking.post(Config.BASE_URL_API + "updateuser.php")
                         .addBodyParameter(body)
                         .setPriority(Priority.MEDIUM)
                         .setOkHttpClient(((RS) getApplication()).getOkHttpClient())
@@ -98,7 +86,7 @@ public class AdminUserDetailActivity extends AppCompatActivity {
 
                                 Toast.makeText(AdminUserDetailActivity.this, message, Toast.LENGTH_LONG).show();
 
-                                if (status.equalsIgnoreCase(Config.RESPONSE_STATUS_VALUE_SUCCESS)) {
+                                if (message.equalsIgnoreCase(Config.RESPONSE_STATUS_VALUE_SUCCESS)) {
                                     Toast.makeText(AdminUserDetailActivity.this,"Update berhasil",Toast.LENGTH_SHORT).show();
                                     finish();
                                 }

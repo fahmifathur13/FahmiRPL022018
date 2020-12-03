@@ -24,6 +24,7 @@ import com.example.fahmirpl022018.activity.Admin.AdminDashboardActivity;
 import com.example.fahmirpl022018.activity.Customer.DashboardActivity;
 import com.example.fahmirpl022018.helper.Config;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -35,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     private LinearLayout btn_Login;
     private ProgressDialog mProgress;
     private boolean isFormFilled = false;
+    private String roleuser, id,gmail,username,noktp,notlp,alamat;
     private SharedPreferences preferences;
 
 
@@ -59,20 +61,19 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 isFormFilled = true;
-                final String username = et_Username.getText().toString();
+                final String email = et_Username.getText().toString();
                 final String password = et_Password.getText().toString();
 
-                if (username.isEmpty() || password.isEmpty()) {
+                if (email.isEmpty() || password.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "Harap lengkapi isian yang tersedia", Toast.LENGTH_SHORT).show();
                     isFormFilled = false;
                 }
                 if (isFormFilled) {
                     mProgress.show();
                     HashMap<String, String> body = new HashMap<>();
-                    body.put("act", "login");
-                    body.put("username", username);
+                    body.put("email", email);
                     body.put("password", password);
-                    AndroidNetworking.post(Config.BASE_URL_API + "auth.php")
+                    AndroidNetworking.post(Config.BASE_URL_API + "login.php")
                             .addBodyParameter(body)
                             .setOkHttpClient(((RS) getApplication()).getOkHttpClient())
                             .setPriority(Priority.MEDIUM)
@@ -82,27 +83,33 @@ public class LoginActivity extends AppCompatActivity {
                                 public void onResponse(JSONObject response) {
                                     Log.d("YZD", "respon : " + response);
 
-                                        String status = response.optString(Config.RESPONSE_STATUS_FIELD);
-                                        String message = response.optString(Config.RESPONSE_MESSAGE_FIELD);
-                                        if (status.equalsIgnoreCase(Config.RESPONSE_STATUS_VALUE_SUCCESS)) {
-                                            JSONObject payload = response.optJSONObject(Config.RESPONSE_PAYLOAD_FIELD);
-                                            String U_ID = payload.optString("LOGIN_ID");
-                                            String U_NAME = payload.optString("LOGIN_NAME");
-                                            String U_LOGIN_TOKEN = payload.optString("U_LOGIN_TOKEN");
-                                            String U_GROUP_ROLE = payload.optString("GROUP_ROLE");
-                                            String U_EMAIL = payload.optString("LOGIN_EMAIL");
 
+                                        String message = response.optString(Config.RESPONSE_MESSAGE_FIELD);
+                                        if (message.equalsIgnoreCase(Config.RESPONSE_STATUS_VALUE_SUCCESS)) {
+                                            JSONArray loginArray = response.optJSONArray("login");
+                                            if (loginArray == null) return;
+                                            for (int i = 0; i <loginArray.length(); i++) {
+                                                final JSONObject aLogin = loginArray.optJSONObject(i);
+                                                roleuser = aLogin.optString("roleuser");
+                                                gmail = aLogin.optString("email");
+                                                username = aLogin.optString("username");
+                                                id = aLogin.optString("id");
+                                                noktp = aLogin.optString("noktp");
+                                                notlp = aLogin.optString("notlp");
+                                                alamat = aLogin.optString("alamat");
+                                            }
                                             preferences = getSharedPreferences(Config.SHARED_PREF_NAME, Context.MODE_PRIVATE);
                                             preferences.edit()
-                                                    .putString(Config.LOGIN_ID_SHARED_PREF, U_ID)
-                                                    .putString(Config.LOGIN_NAME_SHARED_PREF, U_NAME)
-                                                    .putString(Config.LOGIN_TOKEN_SHARED_PREF, U_LOGIN_TOKEN)
-                                                    .putString(Config.LOGIN_GROUP_ID_SHARED_PREF, U_GROUP_ROLE)
-                                                    .putString(Config.LOGIN_EMAIL_SHARED_PREF, U_EMAIL)
+                                                    .putString(Config.LOGIN_ID_SHARED_PREF, id)
+                                                    .putString(Config.LOGIN_NAME_SHARED_PREF, username)
+                                                    .putString(Config.LOGIN_GROUP_ID_SHARED_PREF, roleuser)
+                                                    .putString(Config.LOGIN_EMAIL_SHARED_PREF, gmail)
+                                                    .putString(Config.LOGIN_PHONE_SHARED_PREF,notlp)
+                                                    .putString(Config.LOGIN_ADDRESS_SHARED_PREF,alamat)
                                                     .apply();
 
                                             Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-                                            if (U_GROUP_ROLE.equalsIgnoreCase("GR_ADMIN"))  intent = new Intent(LoginActivity.this, AdminDashboardActivity.class);
+                                            if (roleuser.equalsIgnoreCase("admin"))  intent = new Intent(LoginActivity.this, AdminDashboardActivity.class);
 
                                             startActivity(intent);
                                             Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();

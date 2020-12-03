@@ -1,60 +1,72 @@
 package com.example.fahmirpl022018.activity.Admin;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.example.fahmirpl022018.R;
 import com.example.fahmirpl022018.RS;
-import com.example.fahmirpl022018.adapter.AdminUserAdapter;
+import com.example.fahmirpl022018.adapter.AdminSepedaAdapter;
 import com.example.fahmirpl022018.helper.AppHelper;
 import com.example.fahmirpl022018.helper.Config;
-import com.example.fahmirpl022018.model.UserAdminModel;
+import com.example.fahmirpl022018.model.SepedaModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class AdminUserActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
-    private ImageView iv_more_admin, ivNew, icon_user;
+public class AdminSepedaActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+
+    private ImageView ivAdd, ivBack;
 
     private SwipeRefreshLayout swipeRefresh;
     private RecyclerView rv;
+    private FloatingActionButton tambahdata;
 
-    private ArrayList<UserAdminModel> mList = new ArrayList<>();
-    private AdminUserAdapter mAdapter;
-
-    private String mLoginToken = "";
-    private String mUserId = "";
-
-
+    private ArrayList<SepedaModel> mList = new ArrayList<>();
+    private AdminSepedaAdapter mAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences sp = getSharedPreferences(Config.SHARED_PREF_NAME, Context.MODE_PRIVATE);
-
-        setContentView(R.layout.activity_admin_user);
+        setContentView(R.layout.activity_admin_sepeda);
         binding();
-        swipeRefresh.setOnRefreshListener(this);
+    }
+
+    @Override
+    public void onRefresh() {
+        getUserList();
+    }
+
+    private void binding() {
+        tambahdata = findViewById(R.id.tambahdata);
+        tambahdata.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(AdminSepedaActivity.this,AdminSepedaCreateActivity.class);
+                startActivity(i);
+            }
+        });
+
+        rv = findViewById(R.id.rvNamaSepeda);
+        rv.setHasFixedSize(true);
+        rv.setLayoutManager(new GridLayoutManager(this,2));
+        swipeRefresh = findViewById(R.id.swipeRefresh);
+        swipeRefresh.setOnRefreshListener((SwipeRefreshLayout.OnRefreshListener) this);
         swipeRefresh.post(new Runnable() {
             private void doNothing() {
 
@@ -66,47 +78,11 @@ public class AdminUserActivity extends AppCompatActivity implements SwipeRefresh
             }
         });
 
-        rv.setHasFixedSize(true);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-
     }
-
-    private void binding() {
-        icon_user = findViewById(R.id.icon_user);
-        icon_user.setVisibility(View.VISIBLE);
-        iv_more_admin = findViewById(R.id.iv_more_admin);
-        iv_more_admin.setOnClickListener(new View.OnClickListener() {
-            private void doNothing() {
-
-            }
-
-            @Override
-            public void onClick(View view) {
-                logout();
-            }
-        });
-
-        rv = findViewById(R.id.rvUserManage);
-        swipeRefresh = findViewById(R.id.swipeRefresh);
-
-    }
-
-    @Override
-    public void onRefresh() {
-        getUserList();
-    }
-
-
-    public void show(){
-        mAdapter = new AdminUserAdapter(AdminUserActivity.this, mList, AdminUserActivity.this);
-
-        rv.setAdapter(mAdapter);
-    }
-
 
     public void getUserList() {
         swipeRefresh.setRefreshing(true);
-        AndroidNetworking.get(Config.BASE_URL_API + "getdatauser.php")
+        AndroidNetworking.get(Config.BASE_URL_API + "getsepeda.php")
                 .setPriority(Priority.LOW)
                 .setOkHttpClient(((RS) getApplication()).getOkHttpClient())
                 .build()
@@ -127,10 +103,12 @@ public class AdminUserActivity extends AppCompatActivity implements SwipeRefresh
                             for(int i=0;i < response.length();i++) {
                                 JSONObject data = response.getJSONObject(i);
                                 Log.e("ADF", "ponse: "+data );
-                                UserAdminModel item = AppHelper.mapUserAdminModel(data);
+                                SepedaModel item = AppHelper.mapSepedaAdminModel(data);
                                 mList.add(item);
                             }
-                            show();
+//                            mAdapter = new AdminUserAdapter (list_data_sepedaActivity.this, mList, list_data_sepedaActivity.this);
+                            mAdapter = new AdminSepedaAdapter (AdminSepedaActivity.this, mList, AdminSepedaActivity.this);
+                            rv.setAdapter(mAdapter);
                         } catch(JSONException e) {
                             Log.e("log_tag", "Error parsing data "+e.toString());
                         }
@@ -139,30 +117,15 @@ public class AdminUserActivity extends AppCompatActivity implements SwipeRefresh
                     @Override
                     public void onError(ANError anError) {
                         swipeRefresh.setRefreshing(false);
-                        Toast.makeText(AdminUserActivity.this, Config.TOAST_AN_ERROR, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AdminSepedaActivity.this, Config.TOAST_AN_ERROR, Toast.LENGTH_SHORT).show();
                         Log.d("A", "onError1: " + anError.getErrorBody());
                         Log.d("A", "onError: " + anError.getLocalizedMessage());
                         Log.d("A", "onError: " + anError.getErrorDetail());
                         Log.d("A", "onError: " + anError.getResponse());
                         Log.d("A", "onError: " + anError.getErrorCode());
                     }
+
                 });
 
     }
-    private void logout() {
-        new AlertDialog.Builder(AdminUserActivity.this)
-                .setTitle("Logout")
-                .setMessage("Anda yakin akan logout ?")
-                .setNegativeButton("Tidak", null)
-                .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
-                    private void doNothing() {
-
-                    }
-
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        Config.forceLogout(AdminUserActivity.this);
-                    }
-                }).create().show();
-    }
-
 }

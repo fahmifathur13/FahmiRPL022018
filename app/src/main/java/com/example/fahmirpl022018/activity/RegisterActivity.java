@@ -71,18 +71,17 @@ public class RegisterActivity extends AppCompatActivity {
 
                 if (mIsFormFilled) {
                     HashMap<String, String> body = new HashMap<>();
-                    body.put("act", "register_konsumen");
 
                     mProgress.show();
 
-                    body.put("id", phone);
+                    body.put("nohp", phone);
                     body.put("name", name);
-                    body.put("address", address);
+                    body.put("alamat", address);
                     body.put("noktp", ktp);
                     body.put("password", password);
                     body.put("email", email);
 
-                    AndroidNetworking.post(Config.BASE_URL_API + "auth.php")
+                    AndroidNetworking.post(Config.BASE_URL_API + "register.php")
                             .addBodyParameter(body)
                             .setPriority(Priority.MEDIUM)
                             .setOkHttpClient(((RS) getApplication()).getOkHttpClient())
@@ -92,11 +91,10 @@ public class RegisterActivity extends AppCompatActivity {
                                 public void onResponse(JSONObject response) {
                                     try {
                                         String message = response.getString(Config.RESPONSE_MESSAGE_FIELD);
-                                        String status = response.getString(Config.RESPONSE_STATUS_FIELD);
 
                                         Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_LONG).show();
 
-                                        if (status.equalsIgnoreCase(Config.RESPONSE_STATUS_VALUE_SUCCESS)) {
+                                        if (message.equalsIgnoreCase(Config.RESPONSE_STATUS_VALUE_SUCCESS)) {
                                             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                                             startActivity(intent);
                                             finishAffinity();
@@ -132,7 +130,7 @@ public class RegisterActivity extends AppCompatActivity {
         tv_Login = findViewById(R.id.tv_Login);
         et_Email = findViewById(R.id.et_Email);
         et_Password = findViewById(R.id.et_Password);
-        et_NoHp = findViewById(R.id.et_NoHpregister);
+        et_NoHp = findViewById(R.id.et_NoHp);
         et_NoKtp = findViewById(R.id.et_NoKtp);
         et_Address = findViewById(R.id.et_Address);
         et_Name = findViewById(R.id.et_Name);

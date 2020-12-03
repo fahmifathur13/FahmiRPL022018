@@ -12,6 +12,53 @@ public class UserAdminModel implements Parcelable {
     private String U_AUTHORITY_ID_1;
     private String U_ADDRESS;
 
+    private String merk;
+
+    public String getMerk() {
+        return merk;
+    }
+
+    public void setMerk(String merk) {
+        this.merk = merk;
+    }
+
+    public String getKode() {
+        return kode;
+    }
+
+    public void setKode(String kode) {
+        this.kode = kode;
+    }
+
+    public String getHargasewa() {
+        return hargasewa;
+    }
+
+    public void setHargasewa(String hargasewa) {
+        this.hargasewa = hargasewa;
+    }
+
+    public String getJenis() {
+        return jenis;
+    }
+
+    public void setJenis(String jenis) {
+        this.jenis = jenis;
+    }
+
+    public String getWarna() {
+        return warna;
+    }
+
+    public void setWarna(String warna) {
+        this.warna = warna;
+    }
+
+    private String kode;
+    private String hargasewa;
+    private String jenis;
+    private String warna;
+
     public UserAdminModel(Parcel in) {
         U_ID = in.readString();
         U_NAME = in.readString();
@@ -20,6 +67,12 @@ public class UserAdminModel implements Parcelable {
         U_PHONE = in.readString();
         U_AUTHORITY_ID_1 = in.readString();
         U_ADDRESS = in.readString();
+
+        kode = in.readString();
+        merk = in.readString();
+        hargasewa = in.readString();
+        jenis = in.readString();
+        warna = in.readString();
     }
 
     public UserAdminModel() {
@@ -27,7 +80,7 @@ public class UserAdminModel implements Parcelable {
     }
 
     @Override
-    public int describeContents() {
+    public int describeContents()  {
         return 0;
     }
 
@@ -113,5 +166,11 @@ public class UserAdminModel implements Parcelable {
         dest.writeString(U_PHONE);
         dest.writeString(U_AUTHORITY_ID_1);
         dest.writeString(U_ADDRESS);
+
+        dest.writeString(kode);
+        dest.writeString(merk);
+        dest.writeString(hargasewa);
+        dest.writeString(jenis);
+        dest.writeString(warna);
     }
 }
